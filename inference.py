@@ -20,14 +20,21 @@ def main(test_dir):
 
     print("Loading model and processor...")
     
-    # Load model in bfloat16 to fit perfectly in 48GB VRAM (14GB weights)
-    # The target L40s GPU fully supports bfloat16
+    # Load model in bfloat16. L40s (48GB) handles this easily.
+    # On Kaggle (16GB), we use device_map="auto" to manage memory.
     model = Qwen2VLForConditionalGeneration.from_pretrained(
         MODEL_PATH, 
         torch_dtype=torch.bfloat16, 
         device_map="auto"
     )
-    processor = AutoProcessor.from_pretrained(MODEL_PATH)
+
+    # Optimization: Set min_pixels and max_pixels to avoid OOM on 16GB GPUs
+    # These values are safe for Kaggle while keeping text readable.
+    processor = AutoProcessor.from_pretrained(
+        MODEL_PATH, 
+        min_pixels=256*28*28, 
+        max_pixels=512*28*28 
+    )
 
     print("Model loaded successfully. Starting inference...")
 
