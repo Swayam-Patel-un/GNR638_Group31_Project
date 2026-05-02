@@ -39,7 +39,7 @@ def main(test_dir):
         print("Loaded with default attention")
 
     # Auto-detect resolution based on available GPU VRAM
-    gpu_mem_gb = torch.cuda.get_device_properties(0).total_mem / (1024**3) if torch.cuda.is_available() else 0
+    gpu_mem_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3) if torch.cuda.is_available() else 0
     if gpu_mem_gb >= 40:
         max_px = 1280 * 28 * 28  # L40s (48GB)
     elif gpu_mem_gb >= 20:
