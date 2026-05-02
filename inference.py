@@ -63,7 +63,6 @@ def main(test_dir):
         if not os.path.exists(image_path):
             print(f"Image {image_path} not found. Defaulting to 5 (Unanswered).")
             predictions.append({
-                "id": image_name,
                 "image_name": image_name,
                 "option": 5
             })
@@ -185,19 +184,13 @@ Step 5: On the FINAL line, write ONLY: "ANSWER: X" where X is 1 for A, 2 for B, 
         print(f"[{image_name}] Parsed option: {answer}")
 
         predictions.append({
-            "id": image_name,
             "image_name": image_name,
             "option": answer
         })
 
     print("Inference complete. Saving to submission.csv...")
     submission = pd.DataFrame(predictions)
-    
-    # Check if id is present, otherwise use image_name
-    if "id" not in submission.columns:
-        submission["id"] = submission["image_name"]
-        
-    submission = submission[["id", "image_name", "option"]]
+    submission = submission[["image_name", "option"]]
     submission.to_csv("submission.csv", index=False)
     print("Saved submission.csv successfully.")
 
