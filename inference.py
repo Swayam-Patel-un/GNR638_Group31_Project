@@ -20,20 +20,29 @@ def main(test_dir):
 
     print("Loading model and processor...")
     
-    # Load model in bfloat16. L40s (48GB) handles this easily.
-    # On Kaggle (16GB), we use device_map="auto" to manage memory.
-    model = Qwen2VLForConditionalGeneration.from_pretrained(
-        MODEL_PATH, 
-        torch_dtype=torch.bfloat16, 
-        device_map="auto"
-    )
+    # Load model in bfloat16 with flash attention for speed.
+    # L40s (48GB) handles this easily. On Colab, remove attn_implementation.
+    try:
+        model = Qwen2VLForConditionalGeneration.from_pretrained(
+            MODEL_PATH, 
+            torch_dtype=torch.bfloat16, 
+            device_map="auto",
+            attn_implementation="flash_attention_2"
+        )
+        print("Loaded with Flash Attention 2")
+    except Exception:
+        model = Qwen2VLForConditionalGeneration.from_pretrained(
+            MODEL_PATH, 
+            torch_dtype=torch.bfloat16, 
+            device_map="auto"
+        )
+        print("Loaded with default attention")
 
-    # Optimization: 1280 is best for L40s (48GB), but we use 768 for Colab (16GB) to avoid OOM.
-    # Change this back to 1280 before your final submission!
+    # 1280 for L40s (48GB). For Colab testing (16GB), change to 768.
     processor = AutoProcessor.from_pretrained(
         MODEL_PATH, 
         min_pixels=256*28*28, 
-        max_pixels=768*28*28 
+        max_pixels=1280*28*28 
     )
 
     print("Model loaded successfully. Starting inference...")
@@ -85,7 +94,7 @@ Step 5: On the FINAL line, write ONLY: "ANSWER: X" where X is 1 for A, 2 for B, 
         inputs = inputs.to("cuda")
 
         with torch.no_grad():
-            generated_ids = model.generate(**inputs, max_new_tokens=512)
+            generated_ids = model.generate(**inputs, max_new_tokens=256)
             
         generated_ids_trimmed = [
             out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)

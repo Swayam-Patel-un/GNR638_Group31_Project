@@ -19,6 +19,9 @@ pip install --upgrade pip
 # install dependencies
 pip install -r requirements.txt
 
+# Install flash attention for faster inference on L40s (optional, fails gracefully)
+pip install flash-attn --no-build-isolation || echo "Flash attention not installed, will use default attention"
+
 echo "===== DOWNLOADING MODELS ====="
 # Download Qwen2-VL-7B-Instruct locally so no internet is needed later
 python -c "
