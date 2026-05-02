@@ -38,11 +38,20 @@ def main(test_dir):
         )
         print("Loaded with default attention")
 
-    # 1280 for L40s (48GB). For Colab testing (16GB), change to 768.
+    # Auto-detect resolution based on available GPU VRAM
+    gpu_mem_gb = torch.cuda.get_device_properties(0).total_mem / (1024**3) if torch.cuda.is_available() else 0
+    if gpu_mem_gb >= 40:
+        max_px = 1280 * 28 * 28  # L40s (48GB)
+    elif gpu_mem_gb >= 20:
+        max_px = 768 * 28 * 28
+    else:
+        max_px = 512 * 28 * 28   # Colab T4 (16GB)
+    print(f"GPU VRAM: {gpu_mem_gb:.1f} GB -> max_pixels: {max_px}")
+
     processor = AutoProcessor.from_pretrained(
         MODEL_PATH, 
         min_pixels=256*28*28, 
-        max_pixels=1280*28*28 
+        max_pixels=max_px
     )
 
     print("Model loaded successfully. Starting inference...")
