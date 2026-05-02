@@ -2,11 +2,14 @@
 
 echo "===== SETUP START ====="
 
+# Clone the project repository (must be public before grading starts)
+git clone https://github.com/Swayam-Patel-un/GNR638_Group31_Project.git
+cd GNR638_Group31_Project
+
 # create conda environment
 conda create -n gnr_project_env python=3.11 -y
 
-# Try activating the conda environment
-# Conda initialize might be needed for bash scripts
+# activate environment
 source $(conda info --base)/etc/profile.d/conda.sh || true
 conda activate gnr_project_env
 

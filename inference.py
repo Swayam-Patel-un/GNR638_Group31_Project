@@ -53,10 +53,20 @@ def main(test_dir):
 
         messages = [
             {
+                "role": "system",
+                "content": "You are an expert in deep learning. You solve multiple-choice questions accurately by reasoning step-by-step."
+            },
+            {
                 "role": "user",
                 "content": [
                     {"type": "image", "image": image_path},
-                    {"type": "text", "text": "Analyze this deep learning multiple-choice question image. Identify the correct option among A, B, C, and D. Output ONLY the corresponding number: 1 for A, 2 for B, 3 for C, or 4 for D. If you are uncertain or the image is unclear, output 5."}
+                    {"type": "text", "text": """Look at this multiple-choice question image carefully. 
+
+Step 1: Read and state the question.
+Step 2: List all the options (A, B, C, D).
+Step 3: Reason through each option.
+Step 4: State the correct option letter.
+Step 5: On the FINAL line, write ONLY: "ANSWER: X" where X is 1 for A, 2 for B, 3 for C, or 4 for D."""}
                 ]
             }
         ]
@@ -75,7 +85,7 @@ def main(test_dir):
         inputs = inputs.to("cuda")
 
         with torch.no_grad():
-            generated_ids = model.generate(**inputs, max_new_tokens=10)
+            generated_ids = model.generate(**inputs, max_new_tokens=512)
             
         generated_ids_trimmed = [
             out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
@@ -87,11 +97,17 @@ def main(test_dir):
         
         print(f"[{image_name}] Raw output: {output_text.strip()}")
 
-        match = re.search(r'\b([1-5])\b', output_text)
-        if match:
-            answer = int(match.group(1))
+        # Try to find "ANSWER: X" pattern first (most reliable)
+        match = re.search(r'ANSWER\s*:\s*([1-5])', output_text, re.IGNORECASE)
+        if not match:
+            # Fallback: find the last single digit 1-4 in the output
+            matches = re.findall(r'\b([1-4])\b', output_text)
+            if matches:
+                answer = int(matches[-1])
+            else:
+                answer = 5
         else:
-            answer = 5 
+            answer = int(match.group(1))
 
         print(f"[{image_name}] Parsed option: {answer}")
 
