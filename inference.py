@@ -28,12 +28,12 @@ def main(test_dir):
         device_map="auto"
     )
 
-    # Optimization: Set resolution to model defaults for high accuracy.
-    # 1280*28*28 is the recommended high-res setting for Qwen2-VL.
+    # Optimization: 1280 is best for L40s (48GB), but we use 768 for Colab (16GB) to avoid OOM.
+    # Change this back to 1280 before your final submission!
     processor = AutoProcessor.from_pretrained(
         MODEL_PATH, 
         min_pixels=256*28*28, 
-        max_pixels=1280*28*28 
+        max_pixels=768*28*28 
     )
 
     print("Model loaded successfully. Starting inference...")
