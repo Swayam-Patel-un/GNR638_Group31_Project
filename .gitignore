@@ -1,0 +1,9 @@
+project_datt/
+sample_test_project_2/
+sample_test_project_2.zip
+lastest_guidelines
+*.zip
+models/
+__pycache__/
+.ipynb_checkpoints/
+submission.csv

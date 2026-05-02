@@ -1,0 +1,8 @@
+torch
+torchvision
+transformers>=4.44.0
+qwen-vl-utils
+accelerate
+pandas
+pillow
+huggingface_hub
