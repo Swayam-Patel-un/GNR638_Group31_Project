@@ -15,8 +15,8 @@ def main(test_dir):
 
     predictions = []
 
-    # Local model path downloaded by setup.bash
-    MODEL_PATH = "./models/Qwen2-VL-7B-Instruct"
+    # Local model path downloaded by setup.bash (must be absolute for newer transformers)
+    MODEL_PATH = os.path.abspath("./models/Qwen2-VL-7B-Instruct")
 
     print("Loading model and processor...")
     
