@@ -28,12 +28,12 @@ def main(test_dir):
         device_map="auto"
     )
 
-    # Optimization: Set min_pixels and max_pixels to avoid OOM on 16GB GPUs
-    # These values are safe for Kaggle while keeping text readable.
+    # Optimization: Set resolution to model defaults for high accuracy.
+    # 1280*28*28 is the recommended high-res setting for Qwen2-VL.
     processor = AutoProcessor.from_pretrained(
         MODEL_PATH, 
         min_pixels=256*28*28, 
-        max_pixels=512*28*28 
+        max_pixels=1280*28*28 
     )
 
     print("Model loaded successfully. Starting inference...")
@@ -56,7 +56,7 @@ def main(test_dir):
                 "role": "user",
                 "content": [
                     {"type": "image", "image": image_path},
-                    {"type": "text", "text": "This is a multiple choice question about deep learning. Please carefully read the question and the options. What is the correct option number? Output only the single number 1, 2, 3, or 4 corresponding to the correct option. If you are unsure, output 5."}
+                    {"type": "text", "text": "Analyze this deep learning multiple-choice question image. Identify the correct option among A, B, C, and D. Output ONLY the corresponding number: 1 for A, 2 for B, 3 for C, or 4 for D. If you are uncertain or the image is unclear, output 5."}
                 ]
             }
         ]
