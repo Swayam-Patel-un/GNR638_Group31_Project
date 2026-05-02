@@ -15,9 +15,9 @@ def save_submission(predictions, all_image_names):
     full = list(predictions)
     for name in all_image_names:
         if name not in answered:
-            full.append({"image_name": name, "option": 5})
+            full.append({"id": name, "image_name": name, "option": 5})
     df = pd.DataFrame(full)
-    df = df[["image_name", "option"]]
+    df = df[["id", "image_name", "option"]]
     df.to_csv("submission.csv", index=False)
     return len(answered), len(all_image_names)
 
@@ -89,6 +89,7 @@ def main(test_dir):
         if not os.path.exists(image_path):
             print(f"Image {image_path} not found. Defaulting to 5 (Unanswered).")
             predictions.append({
+                "id": image_name,
                 "image_name": image_name,
                 "option": 5
             })
@@ -217,6 +218,7 @@ Step 5: On the FINAL line, write ONLY: "ANSWER: X" where X is 1 for A, 2 for B, 
         print(f"[{image_name}] Parsed option: {answer}")
 
         predictions.append({
+            "id": image_name,
             "image_name": image_name,
             "option": answer
         })
