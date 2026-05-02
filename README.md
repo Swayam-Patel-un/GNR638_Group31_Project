@@ -1,27 +1,40 @@
-# Deep Learning MCQ Solver (Qwen2-VL)
+# Deep Learning MCQ Solver — GNR 638 Project 2
 
-This project solves Multiple Choice Questions on Deep Learning from images using the state-of-the-art **Qwen2-VL-7B-Instruct** Vision-Language Model.
+**Team:** 22B1816, 22B1296
 
-## Architecture Highlights
-- **Vision-Language Model (VLM):** We abandoned the brittle OCR+LLM pipeline in favor of a single unified VLM. Qwen2-VL processes both the image and text simultaneously. This completely solves the problem of misreading math equations, formatting, and complex diagrams which traditional OCR fails at.
-- **Offline Inference:** The model is downloaded during the `setup.bash` phase. No internet connection is required during inference, adhering strictly to the guidelines.
-- **Fast & Memory Efficient:** Running in `bfloat16`, the 7B model easily fits in the provided 48GB VRAM (using ~14GB) and generates answers rapidly.
+## Approach
 
-## Setup Instructions
+We use **Qwen2-VL-7B-Instruct**, a state-of-the-art Vision-Language Model, to solve deep learning MCQs directly from images. The model reads the question image natively (no OCR needed), reasons step-by-step using chain-of-thought prompting with built-in formula references, and outputs the correct option number.
 
-Simply run the provided setup script. It will create the `gnr_project_env` conda environment, install dependencies, and download the necessary models from HuggingFace to the local directory.
+### Key Design Decisions
+- **Single VLM over OCR+LLM pipeline:** OCR struggles with math notation, code blocks, and diagrams. A VLM processes the image holistically.
+- **Chain-of-thought prompting:** The model reasons through each option before answering, improving accuracy on computational questions.
+- **Auto VRAM detection:** Resolution automatically scales based on GPU memory (512px for 16GB, 768px for 24GB, 1280px for 48GB+).
+- **Flash Attention 2:** Enabled on supported GPUs (L40s) for faster inference. Falls back gracefully on unsupported hardware.
+- **Offline inference:** Model weights are downloaded during `setup.bash`. No internet is required during `inference.py`.
+
+## Setup
 
 ```bash
 bash setup.bash
 ```
 
-## Inference
+This will:
+1. Clone this repository
+2. Copy `inference.py` and `requirements.txt` to the working directory
+3. Create the `gnr_project_env` conda environment (Python 3.11)
+4. Install all dependencies
+5. Download Qwen2-VL-7B-Instruct model weights (~15GB)
 
-Run the inference script as specified in the guidelines:
+## Inference
 
 ```bash
 conda activate gnr_project_env
 python inference.py --test_dir <absolute_path_to_test_dir>
 ```
 
-This will read the images from the test directory and generate a `submission.csv` in the current working directory.
+This generates `submission.csv` in the current working directory.
+
+## References
+- [Qwen2-VL](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) — Qwen Team, Alibaba Cloud
+- [Hugging Face Transformers](https://github.com/huggingface/transformers)

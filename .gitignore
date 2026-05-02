@@ -7,3 +7,6 @@ models/
 __pycache__/
 .ipynb_checkpoints/
 submission.csv
+question2/
+test_set/
+test_set.zip

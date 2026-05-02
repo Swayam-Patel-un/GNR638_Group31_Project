@@ -82,10 +82,62 @@ def main(test_dir):
 
 Step 1: Read and state the question.
 Step 2: List all the options (A, B, C, D).
-Step 3: Reason through each option carefully. Use standard formulas where needed, like:
-  - Conv output size: floor((input + 2*padding - kernel) / stride) + 1
-  - Pooling output size: floor((input - kernel) / stride) + 1
-  - For nn.Linear, the bias is included by default.
+Step 3: Reason through each option carefully. Use these standard formulas where needed:
+
+CONVOLUTION & POOLING:
+  - Conv output: floor((input + 2*padding - kernel) / stride) + 1
+  - Transposed Conv output: (input - 1)*stride - 2*padding + kernel + output_padding
+  - Pooling output: floor((input - kernel) / stride) + 1
+  - Receptive field: R_new = R_old + (kernel - 1) * jump
+  - #Params in Conv2d: (kernel_h * kernel_w * in_channels + 1) * out_channels (with bias)
+
+FULLY CONNECTED:
+  - nn.Linear(in, out) has weight shape (out, in) and bias shape (out)
+  - #Params: in * out + out (with bias)
+  - nn.Linear includes bias by default
+
+BATCH NORM:
+  - BatchNorm has 2 learnable params per channel (gamma, beta) + 2 running stats (mean, var)
+  - Applied BEFORE or AFTER activation (common: Conv -> BN -> ReLU)
+
+ACTIVATIONS:
+  - ReLU(x) = max(0, x), derivative = 1 if x > 0 else 0
+  - Sigmoid(x) = 1/(1+e^(-x)), range (0,1)
+  - Tanh(x) = (e^x - e^(-x))/(e^x + e^(-x)), range (-1,1)
+  - Softmax(x_i) = e^(x_i) / sum(e^(x_j))
+  - LeakyReLU(x) = x if x > 0, else alpha*x
+
+LOSS FUNCTIONS:
+  - Cross-entropy: -sum(y * log(p))
+  - Binary cross-entropy: -[y*log(p) + (1-y)*log(1-p)]
+  - MSE: mean((y - y_hat)^2)
+
+OPTIMIZERS:
+  - SGD: w = w - lr * grad
+  - Momentum: v = beta*v + grad, w = w - lr*v
+  - Adam: combines momentum + RMSprop, uses m (1st moment) and v (2nd moment)
+
+REGULARIZATION:
+  - Dropout: randomly zeros elements with probability p, scales by 1/(1-p) during training
+  - L1 adds |w| to loss, L2 adds w^2 to loss (weight decay)
+
+RNN/LSTM/GRU:
+  - RNN hidden: h_t = tanh(W_hh * h_{t-1} + W_xh * x_t + b)
+  - LSTM has 3 gates: forget, input, output + cell state
+  - GRU has 2 gates: reset, update
+  - Bidirectional doubles hidden size output
+
+TRANSFORMER:
+  - Attention(Q,K,V) = softmax(QK^T / sqrt(d_k)) * V
+  - Multi-head: concat(head_1,...,head_h) * W_O
+  - Positional encoding added to embeddings
+  - Self-attention complexity: O(n^2 * d)
+
+GENERAL:
+  - Gradient vanishing: common with sigmoid/tanh in deep networks
+  - ResNet skip connections: output = F(x) + x
+  - 1x1 convolution: changes channel dimension without changing spatial size
+
 Step 4: State the correct option letter.
 Step 5: On the FINAL line, write ONLY: "ANSWER: X" where X is 1 for A, 2 for B, 3 for C, or 4 for D."""}
                 ]

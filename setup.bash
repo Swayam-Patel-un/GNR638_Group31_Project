@@ -4,7 +4,11 @@ echo "===== SETUP START ====="
 
 # Clone the project repository (must be public before grading starts)
 git clone https://github.com/Swayam-Patel-un/GNR638_Group31_Project.git
-cd GNR638_Group31_Project
+
+# Copy necessary files to current directory (where examiner runs inference.py)
+cp GNR638_Group31_Project/inference.py .
+cp GNR638_Group31_Project/requirements.txt .
+cp GNR638_Group31_Project/README.md .
 
 # create conda environment
 conda create -n gnr_project_env python=3.11 -y
@@ -28,7 +32,7 @@ python -c "
 import os
 from huggingface_hub import snapshot_download
 
-# Create models directory
+# Create models directory in current working directory
 os.makedirs('models', exist_ok=True)
 
 # Download the model (safetensors only to save download time and disk space)
@@ -40,5 +44,11 @@ snapshot_download(
 )
 print('Download complete!')
 "
+
+echo "===== VERIFY ====="
+echo "Files in current directory:"
+ls -la inference.py requirements.txt
+echo "Model directory:"
+ls models/Qwen2-VL-7B-Instruct/ | head -5
 
 echo "===== SETUP COMPLETE ====="
