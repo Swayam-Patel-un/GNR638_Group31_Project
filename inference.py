@@ -73,7 +73,10 @@ def main(test_dir):
 
 Step 1: Read and state the question.
 Step 2: List all the options (A, B, C, D).
-Step 3: Reason through each option.
+Step 3: Reason through each option carefully. Use standard formulas where needed, like:
+  - Conv output size: floor((input + 2*padding - kernel) / stride) + 1
+  - Pooling output size: floor((input - kernel) / stride) + 1
+  - For nn.Linear, the bias is included by default.
 Step 4: State the correct option letter.
 Step 5: On the FINAL line, write ONLY: "ANSWER: X" where X is 1 for A, 2 for B, 3 for C, or 4 for D."""}
                 ]
